@@ -14,7 +14,7 @@ class RecipeListResource(Resource):
             if recipe.is_publish is True:
                 data.append(recipe.data)
 
-        return {'data': data}, HTTPStatus.
+        return {'data': data}, HTTPStatus.OK
 
     def post(self):
         data = request.get_json()
@@ -30,7 +30,7 @@ class RecipeListResource(Resource):
         return recipe.data, HTTPStatus.CREATED
 
 
-class RecipeResourc(Resource):
+class RecipeResource(Resource):
 
     def get(self, recipe_id):
         recipe = next((recipe for recipe in recipe_list if recipe.id == recipe_id and recipe.is_publish == True), None)
@@ -39,6 +39,7 @@ class RecipeResourc(Resource):
             return {'mesage': 'recipe not found'}, HTTPStatus.NOT_FOUND
 
         return recipe.data, HTTPStatus.OK
+
     def put(self, recipe_id):
         data = request.get_json()
 
@@ -59,14 +60,14 @@ class RecipeResourc(Resource):
 class RecipePublishResource(Resource):
 
     def put(self, recipe_id):
-       recipe = next((recipe for recipe in recipe_list if recipe.id == recipe_id), None)
+        recipe = next((recipe for recipe in recipe_list if recipe.id == recipe_id), None)
 
-       if recipe is None:
-           return {'message': 'recipe not found'}, HTTPStatus.NOT_FOUND
+        if recipe is None:
+            return {'message': 'recipe not found'}, HTTPStatus.NOT_FOUND
 
-       recipe.is_publish = True
+        recipe.is_publish = True
 
-       return {}, HTTPStatus.NO_CONTENT
+        return {}, HTTPStatus.NO_CONTENT
 
     def delete(self, recipe_id):
         recipe = next((recipe for recipe in recipe_list if recipe.id == recipe_id), None)
@@ -77,4 +78,3 @@ class RecipePublishResource(Resource):
         recipe.is_publish = False
 
         return {}, HTTPStatus.NO_CONTENT
-
