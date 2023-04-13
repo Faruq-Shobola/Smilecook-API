@@ -1,10 +1,17 @@
 from http import HTTPStatus
 from flask import request
 from flask_restful import Resource
-from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required
+from flask_jwt_extended import (create_access_token,
+                                create_refresh_token,
+                                get_jwt_identity,
+                                jwt_required,
+                                get_jwt)
 
 from utils import check_password
 from models.user import User
+
+
+black_list = set()
 
 
 class TokenResource(Resource):
@@ -33,3 +40,14 @@ class RefreshResource(Resource):
         access_token = create_access_token(identity=current_user, fresh=False)
 
         return {access_token: access_token}, HTTPStatus.OK
+
+
+class RevokeResource(Resource):
+
+    @jwt_required()
+    def post(self):
+        jti = get_jwt()['jti']
+
+        black_list.add(jti)
+
+        return {'message': 'Successfully logged out'}, HTTPStatus.OK
