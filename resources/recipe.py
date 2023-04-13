@@ -5,17 +5,19 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from models.recipe import Recipe
 
+from schemas.recipe import RecipeSchema
+
+recipe_schema = RecipeSchema()
+recipe_list_schema = RecipeSchema(many=True)
+
 
 class RecipeListResource(Resource):
 
     def get(self):
         recipes = Recipe.get_all_published()
-        data = []
+        data = recipe_list_schema.dump(recipes)
 
-        for recipe in recipes:
-            data.append(recipe.data())
-
-        return {'data': data}, HTTPStatus.OK
+        return data, HTTPStatus.OK
 
     @jwt_required()
     def post(self):
