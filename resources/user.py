@@ -61,11 +61,6 @@ class MeResource(Resource):
     def get(self):
 
         user = User.get_by_id(id=get_jwt_identity())
-
-        data = {
-            'id': user.id,
-            'username': user.username,
-            'email': user.email
-        }
+        data = user_schema.dump(user)
 
         return data, HTTPStatus.OK
