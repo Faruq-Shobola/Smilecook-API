@@ -31,7 +31,7 @@ class RecipeListResource(Resource):
 
         recipe.save()
 
-        return recipe.data, HTTPStatus.CREATED
+        return recipe.data(), HTTPStatus.CREATED
 
 
 class RecipeResource(Resource):
@@ -74,7 +74,7 @@ class RecipeResource(Resource):
 
         recipe.save()
 
-        return recipe.data, HTTPStatus.OK
+        return recipe.data(), HTTPStatus.OK
 
     @jwt_required
     def delete(self, recipe_id):
