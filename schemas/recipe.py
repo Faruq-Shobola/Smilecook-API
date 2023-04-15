@@ -21,7 +21,7 @@ class RecipeSchema(Schema):
     num_of_servings = fields.Integer(validate=validate_num_of_servings)
     cook_time = fields.Integer()
     directions = fields.String(validate=[validate.Length(max=1000)])
-    author = fields.Nested(UserSchema, attribute='user', dump_only=True, only=['id', 'username'])
+    author = fields.Nested(UserSchema, attribute='user', dump_only=True, exclude=('email',))
     is_publish = fields.Boolean(dump_only=True)
     created_at = fields.DateTime(dump_only=True)
     updated_at = fields.DateTime(dump_only=True)
