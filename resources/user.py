@@ -1,4 +1,5 @@
-from flask import request
+import os
+from flask import request, url_for
 from flask_restful import Resource
 from http import HTTPStatus
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -13,6 +14,12 @@ from marshmallow import ValidationError
 
 from schemas.recipe import RecipeSchema
 from schemas.user import UserSchema
+
+from mailgun import MailgunApi
+from utils import generate_token, verify_token
+
+mailgun = MailgunApi(domain=os.environ.get('MAILGUN_DOMAIN'),
+                     api_key=os.environ.get('MAILGUN_API_KEY'))
 
 recipe_list_schema = RecipeSchema(many=True)
 
@@ -38,6 +45,13 @@ class UserListResource(Resource):
 
         user = User(**data)
         user.save()
+
+        token = generate_token(user.email, salt='activate')
+        subject = 'please confirm your registration'
+        link = url_for('useractivateresource', token=token, _external=True)
+        text = 'Hi, Thanks for using SmileCook! Please confirm your registration ' \
+               'by clicking the link: {}'.format(link)
+        mailgun.send_email(to=user.email, subject=subject, text=text)
 
         return user_schema.dump(user), HTTPStatus.CREATED
 
@@ -91,3 +105,24 @@ class UserRecipeListResource(Resource):
         recipes = Recipe.get_all_by_user(user_id=user.id, visibility=visibility)
 
         return recipe_list_schema.dump(recipes), HTTPStatus.OK
+
+
+class UserActivateResource(Resource):
+    def get(self, token):
+        email = verify_token(token, salt='activate')
+
+        if email is False:
+            return {'message': 'Invalid token or token epired'}, HTTPStatus.BAD_REQUEST
+
+        user = User.get_by_email(email=email)
+
+        if not user:
+            return {'message': 'User not found'}, HTTPStatus.NOT_FOUND
+
+        if user.is_active is True:
+            return {'message': 'The user account is already activated'}, HTTPStatus.BAD_REQUEST
+
+        user.is_active = True
+
+        user.save()
+        return {}, HTTPStatus.NO_CONTENT
