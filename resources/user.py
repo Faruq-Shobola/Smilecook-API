@@ -1,5 +1,7 @@
 import os
-from flask import request, url_for
+from dotenv import load_dotenv
+
+from flask import request, url_for, render_template
 from flask_restful import Resource
 from http import HTTPStatus
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -18,6 +20,7 @@ from schemas.user import UserSchema
 from mailgun import MailgunApi
 from utils import generate_token, verify_token
 
+load_dotenv()
 mailgun = MailgunApi(domain=os.environ.get('MAILGUN_DOMAIN'),
                      api_key=os.environ.get('MAILGUN_API_KEY'))
 
@@ -47,11 +50,11 @@ class UserListResource(Resource):
         user.save()
 
         token = generate_token(user.email, salt='activate')
-        subject = 'please confirm your registration'
+        subject = 'Please confirm your registration'
         link = url_for('useractivateresource', token=token, _external=True)
         text = 'Hi, Thanks for using SmileCook! Please confirm your registration ' \
                'by clicking the link: {}'.format(link)
-        mailgun.send_email(to=user.email, subject=subject, text=text)
+        mailgun.send_email(to=user.email, subject=subject, text=text, html=render_template('email/confirmation.html', link=link))
 
         return user_schema.dump(user), HTTPStatus.CREATED
 
