@@ -29,7 +29,7 @@ def verify_token(token, max_age=(30 * 60), salt=None):
 
 
 def save_image(image, folder):
-    filename = '{}.{}'.format(uuid.uuid4(), extension(image.filemane))
+    filename = '{}.{}'.format(uuid.uuid4(), extension(image.filename))
     image_set.save(image, folder=folder, name=filename)
 
     return filename

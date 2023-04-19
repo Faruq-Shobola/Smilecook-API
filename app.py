@@ -12,7 +12,7 @@ from resources.token import TokenResource, RefreshResource, RevokeResource, \
 from resources.recipe import RecipeListResource, RecipeResource, \
     RecipePublishResource
 
-from flask_uploads import configure_uploads, patch_request_class
+from flask_uploads import configure_uploads
 
 
 
@@ -30,7 +30,6 @@ def register_extensions(app):
     migrate = Migrate(app, db)
     jwt.init_app(app)
     configure_uploads(app, image_set)
-    patch_request_class(app, 10 * 1024 * 1024)
 
     @jwt.token_in_blocklist_loader
     def check_if_token_in_blacklist(jwt_header, jwt_payload):

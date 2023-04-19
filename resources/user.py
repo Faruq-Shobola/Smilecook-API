@@ -153,7 +153,7 @@ class UserAvatarUploadResource(Resource):
 
         filename = save_image(image=file, folder='avatars')
 
-        user.avatar_image = file
+        user.avatar_image = filename
         user.save()
 
         return user_avatar_schema.dump(user), HTTPStatus.OK
