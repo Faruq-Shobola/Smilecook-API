@@ -12,18 +12,25 @@ from schemas.recipe import RecipeSchema
 from extensions import image_set
 from utils import save_image
 
+from webargs import fields
+from webargs.flaskparser import use_kwargs
+from schemas.recipe import RecipeSchema, RecipePaginationSchema
+
 recipe_schema = RecipeSchema()
 recipe_list_schema = RecipeSchema(many=True)
 recipe_cover_schema = RecipeSchema(only=('cover_url', ))
+recipe_pagination_schema = RecipePaginationSchema()
 
 
 class RecipeListResource(Resource):
 
-    def get(self):
-        recipes = Recipe.get_all_published()
-        data = recipe_list_schema.dump(recipes)
+    @use_kwargs({'page': fields.Int(missing=1),
+                 'per_page': fields.Int(missing=20)})
 
-        return data, HTTPStatus.OK
+    def get(self, page, per_page):
+        paginated_recipes = Recipe.get_all_published(page, per_page)
+
+        return recipe_pagination_schema.dump(paginated_recipes), HTTPStatus.OK
 
     @jwt_required()
     def post(self):
