@@ -1,5 +1,5 @@
 from extensions import db
-from sqlalchemy import acs, desc
+from sqlalchemy import asc, desc
 
 
 class Recipe(db.Model):

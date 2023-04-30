@@ -2,7 +2,6 @@ from flask import request
 from marshmallow import Schema, fields
 from urllib.parse import urlencode
 
-from schemas.recipe import RecipeSchema
 
 class PaginationSchema(Schema):
     class Meta:

@@ -25,8 +25,7 @@ recipe_pagination_schema = RecipePaginationSchema()
 class RecipeListResource(Resource):
 
     @use_kwargs({'page': fields.Int(missing=1),
-                 'per_page': fields.Int(missing=20)})
-
+                 'per_page': fields.Int(missing=20)}, location='query')
     def get(self, page, per_page):
         paginated_recipes = Recipe.get_all_published(page, per_page)
 
