@@ -27,15 +27,15 @@ class Recipe(db.Model):
         return cls.query.filter_by(id=recipe_id).first()
 
     @classmethod
-    def get_all_by_user(cls, user_id, visibility='public'):
+    def get_all_by_user(cls, user_id, page, per_page, visibility='public'):
         if visibility == 'public':
-            return cls.query.filter_by(user_id=user_id, is_publish=True).all()
+            return cls.query.filter_by(user_id=user_id, is_publish=True).paginate(page=page, per_page=per_page)
 
         elif visibility == 'private':
-            return cls.query.filter_by(user_id=user_id, is_publish=False).all()
+            return cls.query.filter_by(user_id=user_id, is_publish=False).paginate(page=page, per_page=per_page)
 
         else:
-            return cls.query.filter_by(user_id=user_id).all()
+            return cls.query.filter_by(user_id=user_id).paginate(page=page, per_page=per_page)
 
     def save(self):
         db.session.add(self)
