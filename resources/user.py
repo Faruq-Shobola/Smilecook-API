@@ -18,7 +18,7 @@ from schemas.recipe import RecipeSchema, RecipePaginationSchema
 from schemas.user import UserSchema
 
 from mailgun import MailgunApi
-from utils import generate_token, verify_token, save_image
+from utils import generate_token, verify_token, save_image, clear_cache
 from extensions import image_set
 
 load_dotenv()
@@ -158,5 +158,6 @@ class UserAvatarUploadResource(Resource):
 
         user.avatar_image = filename
         user.save()
+        clear_cache('/recipes')
 
         return user_avatar_schema.dump(user), HTTPStatus.OK
