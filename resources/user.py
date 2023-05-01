@@ -19,7 +19,7 @@ from schemas.user import UserSchema
 
 from mailgun import MailgunApi
 from utils import generate_token, verify_token, save_image, clear_cache
-from extensions import image_set
+from extensions import image_set, limiter
 
 load_dotenv()
 mailgun = MailgunApi(domain=os.environ.get('MAILGUN_DOMAIN'),
@@ -93,6 +93,7 @@ class MeResource(Resource):
 
 
 class UserRecipeListResource(Resource):
+    decorators = [limiter.limit('3 per minute', methods=['GET'], error_message='Too Many Requests')]
     @jwt_required(optional=True)
     @use_kwargs({'visibility': fields.Str(missing='public'),
                  'page': fields.Int(missing=1),

@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_migrate import Migrate
 from flask_restful import Api
 
@@ -68,6 +68,10 @@ def register_resources(app):
     api.add_resource(RecipeResource, '/recipes/<int:recipe_id>')
     api.add_resource(RecipePublishResource, '/recipes/<int:recipe_id>/publish')
     api.add_resource(RecipeCoverUploadResoucer, '/recipes/<int:recipe_id>/cover')
+#
+# @limiter.request_filter
+# def ip_whitelist():
+#     return request.remote_addr == '127.0.0.1'
 
 if __name__ == '__main__':
     app = create_app()
