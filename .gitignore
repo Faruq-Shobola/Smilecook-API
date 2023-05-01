@@ -1,3 +1,6 @@
 venv
 __pycache__
 .env
+.idea
+static/images/avatars/*
+static/images/recipes/*
