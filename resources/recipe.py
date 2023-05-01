@@ -9,7 +9,7 @@ from models.recipe import Recipe
 from marshmallow import ValidationError
 from schemas.recipe import RecipeSchema
 
-from extensions import image_set
+from extensions import image_set, cache
 from utils import save_image
 
 from webargs import fields
@@ -29,8 +29,9 @@ class RecipeListResource(Resource):
                  'per_page': fields.Int(missing=20),
                  'sort': fields.Str(missing='created_at'),
                  'order': fields.Str(missing='desc')}, location='query')
-
+    @cache.cached(timeout=60, query_string=True)
     def get(self, q, page, per_page, sort, order):
+        print('Querying database...')
         if sort not in ['created_at', 'cook_time', 'num_of_servings']:
             sort = 'created_at'
 
