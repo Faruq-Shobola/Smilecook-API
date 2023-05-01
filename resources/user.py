@@ -1,5 +1,4 @@
 import os
-from dotenv import load_dotenv
 
 from flask import request, url_for, render_template
 from flask_restful import Resource
@@ -21,7 +20,6 @@ from mailgun import MailgunApi
 from utils import generate_token, verify_token, save_image, clear_cache
 from extensions import image_set, limiter
 
-load_dotenv()
 mailgun = MailgunApi(domain=os.environ.get('MAILGUN_DOMAIN'),
                      api_key=os.environ.get('MAILGUN_API_KEY'))
 
