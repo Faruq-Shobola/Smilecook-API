@@ -3,7 +3,7 @@ from flask_migrate import Migrate
 from flask_restful import Api
 
 from config import Config
-from extensions import db, jwt, image_set, cache
+from extensions import db, jwt, image_set, cache, limiter
 
 from resources.user import UserListResource, UserResource, MeResource, \
     UserRecipeListResource, UserActivateResource, UserAvatarUploadResource
@@ -31,23 +31,24 @@ def register_extensions(app):
     jwt.init_app(app)
     configure_uploads(app, image_set)
     cache.init_app(app)
+    limiter.init_app(app)
     @jwt.token_in_blocklist_loader
     def check_if_token_in_blacklist(jwt_header, jwt_payload):
         jti = jwt_payload['jti']
         return jti in black_list
 
-    @app.before_request
-    def before_request():
-        print('\n==================== BEFORE REQUEST ====================\n')
-        print(cache.cache._cache.keys())
-        print('\n=======================================================\n')
-
-    @app.after_request
-    def after_request(response):
-        print('\n==================== AFTER REQUEST====================\n')
-        print(cache.cache._cache.keys())
-        print('\n=======================================================\n')
-        return response
+    # @app.before_request
+    # def before_request():
+    #     print('\n==================== BEFORE REQUEST ====================\n')
+    #     print(cache.cache._cache.keys())
+    #     print('\n=======================================================\n')
+    #
+    # @app.after_request
+    # def after_request(response):
+    #     print('\n==================== AFTER REQUEST====================\n')
+    #     print(cache.cache._cache.keys())
+    #     print('\n=======================================================\n')
+    #     return response
 
 def register_resources(app):
     api = Api(app)

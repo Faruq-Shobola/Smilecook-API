@@ -17,3 +17,4 @@ class Config:
     MAX_CONTENT_LENGTH = 10 * 1024 * 1024
     CACHE_TYPE = 'SimpleCache'
     CACHE_DEFAULT_TIMEOUT = 10 * 60
+    RATELIMIT_HEADERS_ENABLED = True

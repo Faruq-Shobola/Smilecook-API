@@ -9,7 +9,7 @@ from models.recipe import Recipe
 from marshmallow import ValidationError
 from schemas.recipe import RecipeSchema
 
-from extensions import image_set, cache
+from extensions import image_set, cache, limiter
 from utils import save_image, clear_cache
 
 from webargs import fields
@@ -23,7 +23,7 @@ recipe_pagination_schema = RecipePaginationSchema()
 
 
 class RecipeListResource(Resource):
-
+    decorators = [limiter.limit('2 per minute', methods=['GET'], error_message = 'Too Many Requests')]
     @use_kwargs({'q': fields.Str(missing=''),
                  'page': fields.Int(missing=1),
                  'per_page': fields.Int(missing=20),
